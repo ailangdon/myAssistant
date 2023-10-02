@@ -11,13 +11,13 @@ import tempfile
 import time
 import platform
 
-from utils import get_logger
+from utils import get_logger, start_timer, elapsed_time
 
 
 class SpeechToText:
 
     # available models are tiny, base, small, medium, large
-    def __init__(self,model="base",device=("cuda" if torch.cuda.is_available() else "cpu"),english=True,verbose=False,energy=300,pause=0.8,dynamic_energy=False,save_file=False, model_root="~/.cache/whisper",mic_index=None):
+    def __init__(self,model="base",device="cpu",english=True,verbose=False,energy=300,pause=0.8,dynamic_energy=False,save_file=False, model_root="~/.cache/whisper",mic_index=None):
         self.logger = get_logger("whisper_mic", "info")
         self.energy = energy
         self.pause = pause
@@ -130,9 +130,11 @@ class SpeechToText:
     def listen(self, timeout: int = 3):
         self.audio_queue = queue.Queue()
         self.result_queue: "queue.Queue[str]" = queue.Queue()
-        
+        start_timer("STT")
         audio_data = self.get_all_audio(timeout)
-        self.transcribe(data=audio_data)        
+        elapsed_time("STT", "Audio recording")
+        self.transcribe(data=audio_data)     
+        elapsed_time("STT", "Transcription")   
         while True:
             if not self.result_queue.empty():
                 return self.result_queue.get()

@@ -1,14 +1,15 @@
 from fairseq.checkpoint_utils import load_model_ensemble_and_task_from_hf_hub
 from fairseq.models.text_to_speech.hub_interface import TTSHubInterface
 import pyaudio
+from utils import start_timer, elapsed_time
 
 class TextToSpeech:
     def __init__(self):
         self.models, self.cfg, self.task = load_model_ensemble_and_task_from_hf_hub(
             "facebook/fastspeech2-en-ljspeech",
-            arg_overrides={"vocoder": "hifigan", "fp16": False}
+            arg_overrides={"vocoder": "hifigan", "fp16": False, "cpu": True}
         )
-        self.model = self.models[0]
+        self.model = self.models[0].cpu()
         TTSHubInterface.update_cfg_with_data_cfg(self.cfg, self.task.data_cfg)
         self.generator = self.task.build_generator([self.model], self.cfg)
         self.player = pyaudio.PyAudio()
@@ -38,9 +39,8 @@ class TextToSpeech:
         self.stream.close()
 
     def speak(self, text):
+        start_timer("TTS")
         wav, rate = self.generate_wav_data(text)
+        elapsed_time("TTS", "Speech generation")
         self.playback(wav, rate)
-        
-        
-       
-
+        elapsed_time("TTS", "Speech playback")

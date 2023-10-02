@@ -5,25 +5,32 @@ from QueryProcessor import QueryProcessor
 from TextToSpeech import TextToSpeech
 from SpeechToText import SpeechToText
 from WakeWordListener import WakeWordListener
+from utils import start_timer, elapsed_time
 
 load_dotenv()
 
 class MyAssistant:
+
     def __init__(self, name) -> None:        
         self.wake_word_listener = WakeWordListener(name, os.getenv("PICOVOICE_ACCESS_KEY"))
         self.speech_to_text = SpeechToText()
         self.query_processor = QueryProcessor(os.getenv("OPENAI_API_KEY"))
-        self.text_to_speech = TextToSpeech()
+        self.text_to_speech = TextToSpeech()        
 
     def run(self):
         try:
             while True:
                 self.listen_for_keyword()
+                start_timer("main")
                 self.respond_with_yes_man()
-                query = self.listen_to_question()
+                elapsed_time("main", "Saying yes")
+                query = self.listen_to_question() 
+                elapsed_time("main", "Speech to text")               
                 response = self.think_about_a_response(query)
-                print("Response "+str(response))
+                elapsed_time("main", "LLM")
+                print("Response "+str(response))                
                 self.respond_with_response(response)                
+                elapsed_time("main", "Text to speech")
         except KeyboardInterrupt:
             self.cleanup()
 

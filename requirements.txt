@@ -19,3 +19,4 @@ langchain
 openai
 fairseq
 g2p_en
+beepy

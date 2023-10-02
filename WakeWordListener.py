@@ -21,19 +21,19 @@ class WakeWordListener:
                 sensitivities=self.sensitivities)
         except pvporcupine.PorcupineInvalidArgumentError as e:
             print("One or more arguments provided to Porcupine is invalid: ")
-            print("If all other arguments seem valid, ensure that '%s' is a valid AccessKey" % self.access_key)
+            print("If all other arguments seem valid, ensure that '%s' is a valid AccessKey" % self.picovoice_access_key)
             raise e
         except pvporcupine.PorcupineActivationError as e:
             print("AccessKey activation error")
             raise e
         except pvporcupine.PorcupineActivationLimitError as e:
-            print("AccessKey '%s' has reached it's temporary device limit" % self.access_key)
+            print("AccessKey '%s' has reached it's temporary device limit" % self.picovoice_access_key)
             raise e
         except pvporcupine.PorcupineActivationRefusedError as e:
-            print("AccessKey '%s' refused" % self.access_key)
+            print("AccessKey '%s' refused" % self.picovoice_access_key)
             raise e
         except pvporcupine.PorcupineActivationThrottledError as e:
-            print("AccessKey '%s' has been throttled" % self.access_key)
+            print("AccessKey '%s' has been throttled" % self.picovoice_access_key)
             raise e
         except pvporcupine.PorcupineError as e:
             print("Failed to initialize Porcupine")
