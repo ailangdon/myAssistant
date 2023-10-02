@@ -60,7 +60,7 @@ class QueryProcessor:
         response = self.query(prompt)
         print("Action selection response: "+str(response))
         if response[0] in optionsprompt:            
-            if response[0] == optionsprompt:
+            if response[0] == general_question_option:
                 return self.get_plain_answer(query)
             else:
                 print("Action selected: "+str(response[0])+"  Query is: "+query)
